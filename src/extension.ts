@@ -45,13 +45,12 @@ export function activate(context: vscode.ExtensionContext) {
                     editor.edit(editBuilder => {
                         const wordRange = editor.document.getWordRangeAtPosition(position, /\bvar\b/);
                         if (wordRange) {
-                            editBuilder.replace(wordRange, inferredType);
-                        }
-                            // Only replace if 'var' is not inside a comment or string
                             const varStartPos = wordRange.start;
                             if (!isInCommentOrString(editor.document, varStartPos)) {
                                 editBuilder.replace(wordRange, inferredType);
                             }
+                        }
+                    });
                 }
             }
         }

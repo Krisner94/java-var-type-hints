@@ -19,6 +19,42 @@ export function activate(context: vscode.ExtensionContext) {
         }
     );
 
+    const replaceVarCommand = vscode.commands.registerCommand(
+        'java-var-type-hints.replaceVarWithType',
+        async () => {
+            const editor = vscode.window.activeTextEditor;
+            if (!editor) {
+                return;
+            }
+
+            const position = editor.selection.active;
+
+            const hovers = await vscode.commands.executeCommand<vscode.Hover[]>(
+                'vscode.executeHoverProvider',
+                editor.document.uri,
+                position
+            );
+
+            if (hovers && hovers.length > 0) {
+                const contents = hovers[0].contents
+                    .map(c => (typeof c === 'string' ? c : c.value))
+                    .join('\n');
+
+                const match = contents.match(/\(variable\)\s+([\w.$]+(?:<[^>]+>)?(?:\[\])*)\s+\w+/);
+                if (match) {
+                    const inferredType = match[1].trim();
+
+                    editor.edit(editBuilder => {
+                        const wordRange = editor.document.getWordRangeAtPosition(position, /\bvar\b/);
+                        if (wordRange) {
+                            editBuilder.replace(wordRange, inferredType);
+                        }
+                    });
+                }
+            }
+        }
+    );
+
     const changeActiveEditor = vscode.window.onDidChangeActiveTextEditor(editor => {
         if (editor && editor.document.languageId === 'java') {
             updateDecorations(editor);
@@ -39,8 +75,10 @@ export function activate(context: vscode.ExtensionContext) {
         }
     });
 
+    // Registra todos os subscriptions juntos
     context.subscriptions.push(
         reloadCommand,
+        replaceVarCommand,
         changeActiveEditor,
         changeDocument,
         changeConfig
@@ -52,7 +90,7 @@ export function activate(context: vscode.ExtensionContext) {
 }
 
 async function updateDecorations(editor: vscode.TextEditor | undefined) {
-    if (!editor || !decorator || !typeResolver) {
+    if (!editor || !decorator || !typeResolver){
         return;
     }
 
@@ -63,14 +101,14 @@ async function updateDecorations(editor: vscode.TextEditor | undefined) {
     }
 
     const document = editor.document;
-    if (document.languageId !== 'java') {
+    if (document.languageId !== 'java'){
         return;
     }
 
     try {
         const varLocations = await findVarDeclarations(document);
         const typeHints: Array<{ range: vscode.Range; type: string }> = [];
-        
+
         for (const location of varLocations) {
             const type = await typeResolver.resolveType(document, location);
             if (type) {
@@ -87,35 +125,34 @@ async function updateDecorations(editor: vscode.TextEditor | undefined) {
 async function findVarDeclarations(document: vscode.TextDocument): Promise<vscode.Range[]> {
     const locations: vscode.Range[] = [];
     const text = document.getText();
-    
     const varRegex = /\bvar\s+([a-zA-Z_$][a-zA-Z0-9_$]*)\s*=/g;
     let match;
-    
+
     while ((match = varRegex.exec(text)) !== null) {
         const varName = match[1];
         const varNameStart = match.index + match[0].indexOf(varName);
         const startPos = document.positionAt(varNameStart);
         const endPos = document.positionAt(varNameStart + varName.length);
-        
+
         if (!isInCommentOrString(document, startPos)) {
             locations.push(new vscode.Range(startPos, endPos));
         }
     }
-    
+
     return locations;
 }
 
 function isInCommentOrString(document: vscode.TextDocument, position: vscode.Position): boolean {
     const line = document.lineAt(position.line).text;
     const beforePosition = line.substring(0, position.character);
-    
+
     if (beforePosition.includes('//')) {
         return true;
     }
-    
+
     const doubleQuotes = (beforePosition.match(/"/g) || []).length;
     const singleQuotes = (beforePosition.match(/'/g) || []).length;
-    
+
     return doubleQuotes % 2 !== 0 || singleQuotes % 2 !== 0;
 }
 

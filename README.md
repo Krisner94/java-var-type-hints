@@ -1,71 +1,127 @@
-# java-hints README
+# Java Var Type Hints
 
-This is the README for your extension "java-hints". After writing up a brief description, we recommend including the following sections.
+![Version](https://img.shields.io/badge/version-0.0.1-blue)
+![VS Code](https://img.shields.io/badge/VS%20Code-%5E1.98.0-blue)
+![License](https://img.shields.io/badge/license-MIT-green)
 
-## Features
-
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
-
-For example if there is an image subfolder under your extension project workspace:
-
-\!\[feature X\]\(images/feature-x.png\)
-
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
-
-## Requirements
-
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
-
-## Extension Settings
-
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
-
-For example:
-
-This extension contributes the following settings:
-
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
-
-## Known Issues
-
-Calling out known issues can help limit users opening duplicate issues against your extension.
-
-## Release Notes
-
-Users appreciate release notes as you update your extension.
-
-### 1.0.0
-
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
+**Author:** Rhama Krisner  
+**Category:** Programming Languages  
 
 ---
 
-## Following extension guidelines
+## Description
 
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
+**Java Var Type Hints** helps you read Java code that uses `var` by showing the **actual type inferred by the compiler** directly in the editor.
 
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
+Perfect for:  
+- Developers reviewing “lazy” code that relies heavily on `var`.  
+- Teams that want clarity in complex Java projects.  
+- Learning variable types in Java, especially with generics.
 
-## Working with Markdown
+> ⚡ Key feature: the plugin **does not modify your source code** while displaying types.
 
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
+---
 
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
+## Features
 
-## For more information
+- Displays **inferred types for `var`** inline or via hover.  
+- Supports **basic types**, **arrays**, **custom classes**, and **simple generics** (`List<String>`, `Map<K,V>`).  
+- Automatically updates when the document changes or plugin settings are modified.  
+- Command to **replace `var` with the inferred type** manually (`Ctrl+Shift+P → Java Var Type Hints: Replace Var With Type`).  
+- Fully configurable:
+  - Hint color  
+  - Prefix (`:`, `->`, `::`)  
+  - Font size  
+  - Hover information  
 
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
+---
 
-**Enjoy!**
+## Commands
+
+| Command | Description |
+|---------|-------------|
+| `Java Var Type Hints: Reload Hints` | Refreshes all type hints in the active editor. |
+| `Java Var Type Hints: Replace Var With Type` | Manually replaces the `var` keyword with the inferred type from hover. |
+
+---
+
+## Settings
+
+All settings can be accessed under `Settings → Extensions → Java Var Type Hints`:
+
+| Setting | Type | Default | Description |
+|---------|------|---------|-------------|
+| `javaVarTypeHints.enabled` | boolean | true | Enable or disable type hints for `var` variables. |
+| `javaVarTypeHints.color` | string | `#888888` | Color of the type hint (hex, rgb, etc.). |
+| `javaVarTypeHints.style` | string (`inline`/`end-of-line`) | `inline` | Position of the hint: after the variable name or at the end of the line. |
+| `javaVarTypeHints.prefix` | string | `: ` | Prefix displayed before the inferred type. |
+| `javaVarTypeHints.showOnHover` | boolean | true | Show detailed type info on hover. |
+| `javaVarTypeHints.fontSize` | string | `inherit` | Font size of the hint text. |
+
+---
+
+## Visual Example
+
+### Original Code
+```java
+var person = new Person();
+var ages = List.of(10, 20, 30);
+```
+
+### Visual representation in editor
+```java
+Person person = new Person();
+var ages: List<Integer>  = List.of(10, 20, 30);
+```
+
+
+The actual file still uses var; the plugin only visually replaces it in the editor.
+
+---
+
+## Release Notes
+<i>v0.0.1</i>
+
+* Initial release:
+
+    - Basic and simple generic type support.
+
+    - Inline decoration with inferred type.
+
+    - Manual var replacement command.
+
+    - Configurable color, prefix, style, and hover settings.
+
+<br>
+    
+---
+  ## Privacy / Data Policy
+
+Java Var Type Hints does **not** collect, store, or transmit any data from its users.  
+This plugin:
+
+- Does **not** track your usage or send telemetry.
+- Does **not** collect or distribute any personal or project data.
+- Operates entirely locally within VS Code.
+
+You can use this plugin with confidence that your data remains private and fully under your control.
+
+<br>
+
+---    
+
+  # Java Var Type Hints License (NonCommercial)
+
+Copyright (c) 2025 Rhama Krisner
+
+Permission is hereby granted to use, copy, modify, and distribute this software freely for **non-commercial purposes**, subject to the following conditions:
+
+1. You may use, study, modify, and distribute this software for personal or educational purposes.
+2. You may redistribute modified or unmodified versions of this software, provided it is **not sold or used for commercial purposes**.
+3. **Commercial use, selling, or monetization** of this software or any derivative works is strictly prohibited.
+4. Any derivative works or forks must also comply with this license.
+
+---
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
+

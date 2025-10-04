@@ -20,6 +20,10 @@
       {
         "command": "java-var-type-hints.reload",
         "title": "Java Var Type Hints: Reload Hints"
+      },
+      {
+        "command": "java-var-type-hints.replaceVarWithType",
+        "title": "Replace var with inferred type"
       }
     ],
     "configuration": {
@@ -37,7 +41,10 @@
         },
         "javaVarTypeHints.style": {
           "type": "string",
-          "enum": ["inline", "end-of-line"],
+          "enum": [
+            "inline",
+            "end-of-line"
+          ],
           "default": "inline",
           "description": "Position of type hints: 'inline' (after variable name, like IntelliJ) or 'end-of-line'"
         },

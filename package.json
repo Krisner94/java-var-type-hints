@@ -1,0 +1,89 @@
+{
+  "name": "java-hints",
+  "displayName": "Java Var Type Hints",
+  "description": "For devs reading lazy codes.",
+  "version": "0.0.1",
+  "publisher": "Rhama Krisner",
+  "engines": {
+    "vscode": "^1.98.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "activationEvents": [
+    "onLanguage:java",
+    "onStartupFinished"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "java-var-type-hints.reload",
+        "title": "Java Var Type Hints: Reload Hints"
+      }
+    ],
+    "configuration": {
+      "title": "Java Var Type Hints",
+      "properties": {
+        "javaVarTypeHints.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable or disable type hints for var variables in Java"
+        },
+        "javaVarTypeHints.color": {
+          "type": "string",
+          "default": "#888888",
+          "description": "Color of type hints (e.g., #888888, rgb(128, 128, 128))"
+        },
+        "javaVarTypeHints.style": {
+          "type": "string",
+          "enum": ["inline", "end-of-line"],
+          "default": "inline",
+          "description": "Position of type hints: 'inline' (after variable name, like IntelliJ) or 'end-of-line'"
+        },
+        "javaVarTypeHints.prefix": {
+          "type": "string",
+          "default": ": ",
+          "description": "Prefix before the type hint (e.g., ': ', ' -> ', ' :: ')"
+        },
+        "javaVarTypeHints.showOnHover": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show additional information on hover"
+        },
+        "javaVarTypeHints.fontSize": {
+          "type": "string",
+          "default": "inherit",
+          "description": "Font size of type hints (e.g., '0.9em', '12px', 'inherit')"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run package",
+    "compile": "npm run check-types && npm run lint && node esbuild.js",
+    "watch": "npm-run-all -p watch:*",
+    "watch:esbuild": "node esbuild.js --watch",
+    "watch:tsc": "tsc --noEmit --watch --project tsconfig.json",
+    "package": "npm run check-types && npm run lint && node esbuild.js --production",
+    "compile-tests": "tsc -p . --outDir out",
+    "watch-tests": "tsc -p . -w --outDir out",
+    "pretest": "npm run compile-tests && npm run compile && npm run lint",
+    "check-types": "tsc --noEmit",
+    "lint": "eslint src",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.104.0",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "22.x",
+    "@typescript-eslint/eslint-plugin": "^8.45.0",
+    "@typescript-eslint/parser": "^8.45.0",
+    "eslint": "^9.36.0",
+    "esbuild": "^0.25.10",
+    "npm-run-all": "^4.1.5",
+    "typescript": "^5.9.3",
+    "@vscode/test-cli": "^0.0.11",
+    "@vscode/test-electron": "^2.5.2"
+  }
+}

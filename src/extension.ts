@@ -40,16 +40,18 @@ export function activate(context: vscode.ExtensionContext) {
                     .map(c => (typeof c === 'string' ? c : c.value))
                     .join('\n');
 
-                const match = contents.match(/\(variable\)\s+([\w.$]+(?:<[^>]+>)?(?:\[\])*)\s+\w+/);
-                if (match) {
-                    const inferredType = match[1].trim();
-
+                const inferredType = extractTypeFromHoverContent(contents);
+                if (inferredType) {
                     editor.edit(editBuilder => {
                         const wordRange = editor.document.getWordRangeAtPosition(position, /\bvar\b/);
                         if (wordRange) {
                             editBuilder.replace(wordRange, inferredType);
                         }
-                    });
+                            // Only replace if 'var' is not inside a comment or string
+                            const varStartPos = wordRange.start;
+                            if (!isInCommentOrString(editor.document, varStartPos)) {
+                                editBuilder.replace(wordRange, inferredType);
+                            }
                 }
             }
         }
@@ -90,7 +92,7 @@ export function activate(context: vscode.ExtensionContext) {
 }
 
 async function updateDecorations(editor: vscode.TextEditor | undefined) {
-    if (!editor || !decorator || !typeResolver){
+    if (!editor || !decorator || !typeResolver) {
         return;
     }
 
@@ -101,7 +103,7 @@ async function updateDecorations(editor: vscode.TextEditor | undefined) {
     }
 
     const document = editor.document;
-    if (document.languageId !== 'java'){
+    if (document.languageId !== 'java') {
         return;
     }
 
@@ -154,6 +156,11 @@ function isInCommentOrString(document: vscode.TextDocument, position: vscode.Pos
     const singleQuotes = (beforePosition.match(/'/g) || []).length;
 
     return doubleQuotes % 2 !== 0 || singleQuotes % 2 !== 0;
+}
+
+function extractTypeFromHoverContent(contents: string): string | undefined {
+    const match = contents.match(/\(variable\)\s+([\w.$]+(?:<[^>]+>)?(?:\[\])*)\s+\w+/);
+    return match ? match[1].trim() : undefined;
 }
 
 export function deactivate() {

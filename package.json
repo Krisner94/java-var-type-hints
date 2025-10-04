@@ -1,13 +1,17 @@
 {
-  "name": "java-hints",
+  "name": "java-var-type-hints",
   "displayName": "Java Var Type Hints",
   "description": "For devs reading lazy codes.",
   "version": "0.0.1",
-  "publisher": "Rhama Krisner",
+  "publisher": "rhama-freitas",
+  "repository": {
+    "type": "github",
+    "url": "https://github.com/Krisner94/java-var-type-hints"
+  },
   "engines": {
     "vscode": "^1.98.0"
   },
-  "icon": "icon.npg",
+  "icon": "icon.png",
   "categories": [
     "Programming Languages"
   ],
